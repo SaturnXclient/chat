@@ -24,15 +24,15 @@ export const HashGenerator: React.FC = () => {
   };
 
   return (
-    <div className="glass p-6 rounded-xl">
-      <div className="flex items-center mb-4">
+    <div className="space-y-6">
+      <div className="flex items-center mb-6">
         <Hash className="w-6 h-6 text-cyan-400 mr-2" />
         <h2 className="text-xl font-semibold text-cyan-400">Hash Generator</h2>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-cyan-300 mb-2">Algorithm</label>
+          <label className="block text-sm font-medium text-cyan-300 mb-2">Algorithm</label>
           <select
             value={algorithm}
             onChange={(e) => setAlgorithm(e.target.value as 'SHA-256' | 'SHA-512')}
@@ -44,7 +44,7 @@ export const HashGenerator: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-cyan-300 mb-2">Input Text</label>
+          <label className="block text-sm font-medium text-cyan-300 mb-2">Input Text</label>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -62,7 +62,7 @@ export const HashGenerator: React.FC = () => {
 
         {hash && (
           <div className="relative">
-            <label className="block text-cyan-300 mb-2">Generated Hash</label>
+            <label className="block text-sm font-medium text-cyan-300 mb-2">Generated Hash</label>
             <div className="relative">
               <input
                 type="text"

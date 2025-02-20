@@ -1,29 +1,19 @@
 import React, { useState } from 'react';
-import { Key, Hash, FileText, Dice5, Eye, ArrowLeft, Lock, Clock, Brain, Image, Shield, Trash2, QrCode } from 'lucide-react';
-import { PasswordGenerator } from './tools/PasswordGenerator';
-import { MorseConverter } from './tools/MorseConverter';
-import { TimeCapsule } from './tools/TimeCapsule';
-import { StrengthAnalyzer } from './tools/StrengthAnalyzer';
-import { DataVisualizer } from './tools/DataVisualizer';
-import { LearningLab } from './tools/LearningLab';
-import { ChecksumTool } from './tools/ChecksumTool';
-import { EntropyAnalyzer } from './tools/EntropyAnalyzer';
-import { SecureShredder } from './tools/SecureShredder';
-import { CodeGenerator } from './tools/CodeGenerator';
+import { Key, Hash, FileText, Dice5, Eye, ArrowLeft, Lock } from 'lucide-react';
+import { PasswordGenerator } from './PasswordGenerator';
+import { HashGenerator } from './HashGenerator';
+import { TextObfuscator } from './TextObfuscator';
+import { RandomGenerator } from './RandomGenerator';
+import { SecureNotes } from './SecureNotes';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/useStore';
 
 const tools = [
-  { id: 'morse', name: 'Morse Code Converter', icon: Hash, component: MorseConverter },
-  { id: 'capsule', name: 'Digital Time Capsule', icon: Clock, component: TimeCapsule },
-  { id: 'strength', name: 'Encryption Analyzer', icon: Brain, component: StrengthAnalyzer },
-  { id: 'visualizer', name: 'Binary Visualizer', icon: Image, component: DataVisualizer },
-  { id: 'password', name: 'Password Generator Pro', icon: Key, component: PasswordGenerator },
-  { id: 'learning', name: 'Encryption Lab', icon: Shield, component: LearningLab },
-  { id: 'checksum', name: 'File Checksum', icon: FileText, component: ChecksumTool },
-  { id: 'entropy', name: 'Entropy Analyzer', icon: Dice5, component: EntropyAnalyzer },
-  { id: 'shredder', name: 'Secure Shredder', icon: Trash2, component: SecureShredder },
-  { id: 'code', name: 'Code Generator', icon: QrCode, component: CodeGenerator },
+  { id: 'password', name: 'Password Generator', icon: Key, component: PasswordGenerator },
+  { id: 'hash', name: 'Hash Generator', icon: Hash, component: HashGenerator },
+  { id: 'obfuscator', name: 'Text Obfuscator', icon: FileText, component: TextObfuscator },
+  { id: 'random', name: 'Random Generator', icon: Dice5, component: RandomGenerator },
+  { id: 'notes', name: 'Secure Notes', icon: Lock, component: SecureNotes },
 ];
 
 export const SecurityTools: React.FC = () => {
