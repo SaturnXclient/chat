@@ -5,13 +5,16 @@ import { FileEncryption } from './tools/FileEncryption';
 import { PasswordManager } from './tools/PasswordManager';
 import { SecureNotes } from './tools/SecureNotes';
 import { QRCodeTool } from './tools/QRCodeTool';
+import { EntropyAnalyzer } from './tools/EntropyAnalyzer';
+import { BreachChecker } from './tools/BreachChecker';
 
-// Keep only the implemented tools
 const tools = [
   { id: 'file-encryption', name: 'File Encryption', component: FileEncryption },
   { id: 'password-manager', name: 'Password Manager', component: PasswordManager },
   { id: 'secure-notes', name: 'Secure Notes', component: SecureNotes },
   { id: 'qr-code', name: 'QR Code Generator', component: QRCodeTool },
+  { id: 'entropy-analyzer', name: 'Entropy Analyzer', component: EntropyAnalyzer },
+  { id: 'breach-checker', name: 'Breach Checker', component: BreachChecker },
 ];
 
 export const SupporterTools: React.FC = () => {
