@@ -4,7 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthForm } from './components/AuthForm';
 import { ChatInterface } from './components/ChatInterface';
 import { SecurityTools } from './components/SecurityTools';
-import { Shield, Lock, Key, Zap, Eye, ChevronDown, ChevronUp } from 'lucide-react';
+import { Shield, Lock, Key, Zap, Eye, ChevronDown, ChevronUp, Gamepad2 } from 'lucide-react';
 import { MatrixRain } from './components/MatrixRain';
 import { DecryptingText } from './components/DecryptingText';
 import { SecurityFeatures } from './components/SecurityFeatures';
@@ -12,6 +12,7 @@ import { DonationBanner } from './components/DonationBanner';
 import { useStore } from './store/useStore';
 import { SupporterTools } from './components/SupporterTools';
 import { CircuitBackground } from './components/CircuitBackground';
+import { GamesHub } from './components/GamesHub';
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -27,6 +28,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 function WelcomeScreen() {
   const { performanceMode, togglePerformanceMode } = useStore();
   const [showFeatures, setShowFeatures] = useState(false);
+  const navigate = useNavigate();
 
   const securityFeatures = [
     {
@@ -57,6 +59,13 @@ function WelcomeScreen() {
           <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
             <h2 className="text-cyan-400 font-semibold">RSA Secure Chat</h2>
             <div className="flex items-center space-x-4">
+              <button
+                onClick={() => navigate('/games')}
+                className="glass px-4 py-2 rounded-lg flex items-center space-x-2 cyber-hover border border-cyan-500/20"
+              >
+                <Gamepad2 className="w-5 h-5 text-cyan-400" />
+                <span className="text-cyan-400">Games</span>
+              </button>
               <button
                 onClick={() => setShowFeatures(!showFeatures)}
                 className="glass px-4 py-2 rounded-lg flex items-center space-x-2 cyber-hover border border-cyan-500/20"
@@ -153,6 +162,7 @@ function App() {
           <Route path="/" element={<WelcomeScreen />} />
           <Route path="/chat" element={<ChatInterface />} />
           <Route path="/tools" element={<SecurityTools />} />
+          <Route path="/games" element={<GamesHub />} />
           <Route 
             path="/supporter-tools" 
             element={
@@ -162,7 +172,7 @@ function App() {
             } 
           />
         </Routes>
-      </BrowserRouter>
+      </B rowserRouter>
       <SecurityFeatures />
       <Toaster 
         position="top-right"
