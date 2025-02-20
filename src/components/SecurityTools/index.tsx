@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Key, Hash, FileText, Dice5, Eye, ArrowLeft, Lock } from 'lucide-react';
+import { Key, Hash, FileText, Dice5, Eye, ArrowLeft, Lock, Book } from 'lucide-react';
 import { PasswordGenerator } from './PasswordGenerator';
 import { HashGenerator } from './HashGenerator';
 import { TextObfuscator } from './TextObfuscator';
 import { RandomGenerator } from './RandomGenerator';
 import { SecureNotes } from './SecureNotes';
+import { LearningLab } from './tools/LearningLab';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/useStore';
 
@@ -14,6 +15,7 @@ const tools = [
   { id: 'obfuscator', name: 'Text Obfuscator', icon: FileText, component: TextObfuscator },
   { id: 'random', name: 'Random Generator', icon: Dice5, component: RandomGenerator },
   { id: 'notes', name: 'Secure Notes', icon: Lock, component: SecureNotes },
+  { id: 'learning', name: 'Learning Lab', icon: Book, component: LearningLab },
 ];
 
 export const SecurityTools: React.FC = () => {
