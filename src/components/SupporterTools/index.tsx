@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Crown, Shield, ChevronDown } from 'lucide-react';
 import { FileEncryption } from './tools/FileEncryption';
 import { PasswordManager } from './tools/PasswordManager';
@@ -7,6 +6,9 @@ import { SecureNotes } from './tools/SecureNotes';
 import { QRCodeTool } from './tools/QRCodeTool';
 import { EntropyAnalyzer } from './tools/EntropyAnalyzer';
 import { BreachChecker } from './tools/BreachChecker';
+import { EncryptionArt } from './tools/EncryptionArt';
+import { LearningLab } from './tools/LearningLab';
+import { useNavigate } from 'react-router-dom';
 
 const tools = [
   { id: 'file-encryption', name: 'File Encryption', component: FileEncryption },
@@ -15,6 +17,8 @@ const tools = [
   { id: 'qr-code', name: 'QR Code Generator', component: QRCodeTool },
   { id: 'entropy-analyzer', name: 'Entropy Analyzer', component: EntropyAnalyzer },
   { id: 'breach-checker', name: 'Breach Checker', component: BreachChecker },
+  { id: 'encryption-art', name: 'Encryption Art', component: EncryptionArt },
+  { id: 'learning-lab', name: 'Learning Lab', component: LearningLab }
 ];
 
 export const SupporterTools: React.FC = () => {
