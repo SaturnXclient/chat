@@ -1,28 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Crown, Shield, ChevronDown, Brain, Hash, Clock, Image } from 'lucide-react';
+import { ArrowLeft, Crown, Shield, ChevronDown } from 'lucide-react';
 import { FileEncryption } from './tools/FileEncryption';
 import { PasswordManager } from './tools/PasswordManager';
 import { SecureNotes } from './tools/SecureNotes';
 import { QRCodeTool } from './tools/QRCodeTool';
 import { EntropyAnalyzer } from './tools/EntropyAnalyzer';
 import { BreachChecker } from './tools/BreachChecker';
-import { DataVisualizer } from './tools/DataVisualizer';
-import { MorseConverter } from './tools/MorseConverter';
-import { TimeCapsule } from './tools/TimeCapsule';
-import { LearningLab } from './tools/LearningLab';
 
 const tools = [
-  { id: 'file-encryption', name: 'File Encryption', icon: Shield, component: FileEncryption },
-  { id: 'password-manager', name: 'Password Manager Pro', component: PasswordManager },
+  { id: 'file-encryption', name: 'File Encryption', component: FileEncryption },
+  { id: 'password-manager', name: 'Password Manager', component: PasswordManager },
   { id: 'secure-notes', name: 'Secure Notes', component: SecureNotes },
   { id: 'qr-code', name: 'QR Code Generator', component: QRCodeTool },
   { id: 'entropy-analyzer', name: 'Entropy Analyzer', component: EntropyAnalyzer },
   { id: 'breach-checker', name: 'Breach Checker', component: BreachChecker },
-  { id: 'data-visualizer', name: 'Data Visualizer', icon: Image, component: DataVisualizer },
-  { id: 'morse', name: 'Morse Code Converter', icon: Hash, component: MorseConverter },
-  { id: 'time-capsule', name: 'Digital Time Capsule', icon: Clock, component: TimeCapsule },
-  { id: 'learning-lab', name: 'Learning Lab', icon: Brain, component: LearningLab },
 ];
 
 export const SupporterTools: React.FC = () => {
