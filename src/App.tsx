@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthForm } from './components/AuthForm';
 import { ChatInterface } from './components/ChatInterface';
@@ -25,7 +25,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-function WelcomeScreen() {
+// Separate WelcomeScreen into its own component to use hooks properly
+const WelcomeScreenContent = () => {
   const { performanceMode, togglePerformanceMode } = useStore();
   const [showFeatures, setShowFeatures] = useState(false);
   const navigate = useNavigate();
@@ -152,6 +153,11 @@ function WelcomeScreen() {
       </div>
     </div>
   );
+};
+
+// Wrap WelcomeScreen with Router context
+function WelcomeScreen() {
+  return <WelcomeScreenContent />;
 }
 
 function App() {
@@ -172,8 +178,8 @@ function App() {
             } 
           />
         </Routes>
-      </B rowserRouter>
-      <SecurityFeatures />
+        <SecurityFeatures />
+      </BrowserRouter>
       <Toaster 
         position="top-right"
         toastOptions={{
