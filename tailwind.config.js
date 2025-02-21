@@ -3,6 +3,9 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      colors: {
+        background: '#020617', // slate-950
+      },
       animation: {
         'gradient': 'gradient 15s ease infinite',
         'float': 'float 3s ease-in-out infinite',
@@ -20,8 +23,8 @@ export default {
           '100%': { transform: 'translateY(0px)' },
         },
         glow: {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(147, 51, 234, 0.7)' },
-          '50%': { boxShadow: '0 0 20px 0 rgba(147, 51, 234, 0.3)' },
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(148, 163, 184, 0.7)' }, // slate-400
+          '50%': { boxShadow: '0 0 20px 0 rgba(148, 163, 184, 0.3)' },
         },
       },
       screens: {

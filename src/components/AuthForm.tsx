@@ -4,19 +4,14 @@ import { generateKeyPair } from '../crypto';
 import { useStore } from '../store/useStore';
 import { Lock, User, Mail, Wrench, Crown, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { pb } from '../pocketbaseClient';
-
-// Test user credentials
-const TEST_USER = {
-  email: 'sxedra@gmail.com',
-  password: 'asa123'
-};
+import { supabase } from '../supabaseClient';
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
   const [showSupporterInput, setShowSupporterInput] = useState(false);
   const [supporterCode, setSupporterCode] = useState('');
   const navigate = useNavigate();
@@ -24,52 +19,62 @@ export function AuthForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       const keyPair = generateKeyPair();
       
       if (isLogin) {
-        // Check for test user
-        if (email === TEST_USER.email && password === TEST_USER.password) {
-          setUser({
-            id: 'test-user',
-            username: 'Test User',
-            publicKey: keyPair.publicKey,
-          });
-          setKeyPair(keyPair);
-          toast.success('Welcome Test User!');
-          navigate('/chat');
-          return;
-        }
+        const { data: { user }, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
 
-        const authData = await pb.collection('users').authWithPassword(email, password);
-        
+        if (error) throw error;
+
+        // Get user profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user?.id)
+          .single();
+
         setUser({
-          id: authData.record.id,
-          username: authData.record.username,
-          publicKey: authData.record.publicKey,
+          id: user?.id || '',
+          username: profile.username,
+          publicKey: profile.public_key,
         });
         
         setKeyPair({
-          publicKey: authData.record.publicKey,
-          privateKey: authData.record.privateKey,
+          publicKey: profile.public_key,
+          privateKey: profile.private_key,
         });
+
       } else {
-        const data = {
-          username,
+        const { data: { user }, error } = await supabase.auth.signUp({
           email,
           password,
-          passwordConfirm: password,
-          publicKey: keyPair.publicKey,
-          privateKey: keyPair.privateKey,
-        };
+          options: {
+            data: {
+              username,
+            }
+          }
+        });
 
-        const record = await pb.collection('users').create(data);
-        await pb.collection('users').authWithPassword(email, password);
+        if (error) throw error;
+
+        // Create user profile
+        await supabase.from('profiles').insert({
+          id: user?.id,
+          username,
+          public_key: keyPair.publicKey,
+          private_key: keyPair.privateKey,
+        });
 
         setUser({
-          id: record.id,
-          username: record.username,
-          publicKey: record.publicKey,
+          id: user?.id || '',
+          username,
+          publicKey: keyPair.publicKey,
         });
         
         setKeyPair(keyPair);
@@ -79,6 +84,8 @@ export function AuthForm() {
       navigate('/chat');
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,64 +107,65 @@ export function AuthForm() {
 
   return (
     <div className="max-w-md mx-auto">
-      <div className="glass p-8 rounded-xl border border-cyan-500/20 backdrop-blur-lg">
-        <h2 className="text-2xl font-bold text-cyan-400 mb-6 text-center">
+      <div className="glass p-8 rounded-xl">
+        <h2 className="text-2xl font-bold text-slate-200 mb-6 text-center">
           {isLogin ? 'Welcome Back' : 'Create Account'}
         </h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-cyan-300 mb-1">Email</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Email</label>
             <div className="relative">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-cyan-500/20 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-cyan-300"
+                className="w-full pl-10"
                 placeholder="Enter your email"
                 required
               />
-              <Mail className="absolute left-3 top-3.5 h-5 w-5 text-cyan-500/50" />
+              <Mail className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
             </div>
           </div>
 
           {!isLogin && (
             <div>
-              <label className="block text-sm font-medium text-cyan-300 mb-1">Username</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Username</label>
               <div className="relative">
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-cyan-500/20 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-cyan-300"
+                  className="w-full pl-10"
                   placeholder="Choose a username"
                   required
                 />
-                <User className="absolute left-3 top-3.5 h-5 w-5 text-cyan-500/50" />
+                <User className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-cyan-300 mb-1">Password</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
             <div className="relative">
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-cyan-500/20 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-cyan-300"
+                className="w-full pl-10"
                 placeholder="Enter your password"
                 required
               />
-              <Lock className="absolute left-3 top-3.5 h-5 w-5 text-cyan-500/50" />
+              <Lock className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-cyan-500/20"
+            disabled={loading}
+            className="btn btn-primary w-full flex items-center justify-center space-x-2"
           >
-            <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
+            <span>{loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}</span>
             <ArrowRight className="w-5 h-5" />
           </button>
         </form>
@@ -165,24 +173,24 @@ export function AuthForm() {
         <div className="mt-6 space-y-4">
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="text-cyan-400 hover:text-cyan-300 text-sm w-full text-center"
+            className="text-slate-400 hover:text-slate-200 text-sm w-full text-center"
           >
             {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
           </button>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-cyan-500/20"></div>
+              <div className="w-full border-t border-slate-800"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-900 text-cyan-400">Or continue with</span>
+              <span className="px-2 bg-slate-950 text-slate-400">Or continue with</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <button
               onClick={handleAnonymousAccess}
-              className="flex items-center justify-center space-x-2 px-4 py-3 border border-cyan-500/20 rounded-lg bg-gray-900/50 text-cyan-400 hover:bg-cyan-900/30 transition duration-200"
+              className="flex items-center justify-center space-x-2 px-4 py-3 border border-slate-800 rounded-lg bg-slate-900/50 text-slate-200 hover:bg-slate-800/50 transition duration-200"
             >
               <User className="w-5 h-5" />
               <span>Anonymous Access</span>
@@ -190,7 +198,7 @@ export function AuthForm() {
 
             <button
               onClick={() => navigate('/tools')}
-              className="flex items-center justify-center space-x-2 px-4 py-3 border border-cyan-500/20 rounded-lg bg-gray-900/50 text-cyan-400 hover:bg-cyan-900/30 transition duration-200"
+              className="flex items-center justify-center space-x-2 px-4 py-3 border border-slate-800 rounded-lg bg-slate-900/50 text-slate-200 hover:bg-slate-800/50 transition duration-200"
             >
               <Wrench className="w-5 h-5" />
               <span>Security Tools</span>
@@ -198,7 +206,7 @@ export function AuthForm() {
 
             <button
               onClick={() => setShowSupporterInput(!showSupporterInput)}
-              className="flex items-center justify-center space-x-2 px-4 py-3 border border-cyan-500/20 rounded-lg bg-gray-900/50 text-cyan-400 hover:bg-cyan-900/30 transition duration-200"
+              className="flex items-center justify-center space-x-2 px-4 py-3 border border-slate-800 rounded-lg bg-slate-900/50 text-slate-200 hover:bg-slate-800/50 transition duration-200"
             >
               <Crown className="w-5 h-5" />
               <span>Early Supporter Access</span>
@@ -213,13 +221,13 @@ export function AuthForm() {
                   value={supporterCode}
                   onChange={(e) => setSupporterCode(e.target.value)}
                   placeholder="Enter supporter code"
-                  className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-cyan-500/20 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent text-cyan-300"
+                  className="w-full pl-10"
                 />
-                <Crown className="absolute left-3 top-3.5 h-5 w-5 text-cyan-500/50" />
+                <Crown className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
               </div>
               <button
                 onClick={handleSupporterCode}
-                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2"
+                className="btn btn-primary w-full flex items-center justify-center space-x-2"
               >
                 <span>Verify Code</span>
                 <ArrowRight className="w-5 h-5" />
