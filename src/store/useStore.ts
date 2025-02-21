@@ -6,6 +6,7 @@ interface User {
   id: string;
   username: string;
   publicKey: string;
+  email?: string;
   isAnonymous?: boolean;
 }
 

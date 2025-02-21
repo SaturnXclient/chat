@@ -25,24 +25,27 @@ export function AuthForm() {
       const keyPair = generateKeyPair();
       
       if (isLogin) {
-        const { data: { user }, error } = await supabase.auth.signInWithPassword({
+        const { data: { user: authUser }, error: authError } = await supabase.auth.signInWithPassword({
           email,
           password
         });
 
-        if (error) throw error;
+        if (authError) throw authError;
 
         // Get user profile
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', user?.id)
+          .eq('id', authUser?.id)
           .single();
 
+        if (profileError) throw profileError;
+
         setUser({
-          id: user?.id || '',
+          id: authUser?.id || '',
           username: profile.username,
           publicKey: profile.public_key,
+          email: authUser?.email
         });
         
         setKeyPair({
@@ -51,7 +54,7 @@ export function AuthForm() {
         });
 
       } else {
-        const { data: { user }, error } = await supabase.auth.signUp({
+        const { data: { user: authUser }, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -61,20 +64,25 @@ export function AuthForm() {
           }
         });
 
-        if (error) throw error;
+        if (signUpError) throw signUpError;
 
         // Create user profile
-        await supabase.from('profiles').insert({
-          id: user?.id,
-          username,
-          public_key: keyPair.publicKey,
-          private_key: keyPair.privateKey,
-        });
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: authUser?.id,
+            username,
+            public_key: keyPair.publicKey,
+            private_key: keyPair.privateKey,
+          });
+
+        if (profileError) throw profileError;
 
         setUser({
-          id: user?.id || '',
+          id: authUser?.id || '',
           username,
           publicKey: keyPair.publicKey,
+          email: authUser?.email
         });
         
         setKeyPair(keyPair);
@@ -155,6 +163,7 @@ export function AuthForm() {
                 className="w-full pl-10"
                 placeholder="Enter your password"
                 required
+                minLength={8}
               />
               <Lock className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
             </div>
